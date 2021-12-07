@@ -12,7 +12,10 @@
 | `exp008` | `swin_large_patch4_window12_384` | binary | 384 | - | 17.96711 (17.96861) | (TTA)
 | `exp009` | `swin_large_patch4_window12_384_in22k` | binary | 384 | - | 17.96142
 | `exp010` | `swin_large_patch4_window12_384_in22k` | binary | 384 | - | 18.04634
-| `exp011` | `swin_large_patch4_window7_224` | binary | 224 | - |
+| `exp011` | `swin_large_patch4_window7_224` | binary | 224 | - | 18.14715
+| `exp012` | `swin_large_patch4_window7_224` | binary | 224 | - | 18.12262
+| `exp013` | `vit_large_patch32_384` | binary | 384 | - |
+| `exp014` | `vit_large_patch16_224` | binary | 224 | - |
 
 ## kaggle blog
 ### 2021-12-05
@@ -39,3 +42,13 @@
         - Transpose, Horizontal, Vertial, ShiftedRotateResizeのみに
     - LRを徐々に下げていくスケジューラに変更
     - HeadのDropoutを復活
+- `exp012`
+    - MultiSampleDropoutを追加
+        - 実際はnn.Dropoutレイヤーのみ異なるので実装が違っている・・・
+### 2021-12-07
+- `exp013`
+- `exp014`
+    - ViTを試してみる
+- MixUpについて
+    - 回帰タスクでは相性が悪いかも？(atmaCup#11)
+    - 重み付けラベルに意味があるかどうか(10と50を混ぜたら30の画像になるのか？)
