@@ -14,8 +14,9 @@
 | `exp010` | `swin_large_patch4_window12_384_in22k` | binary | 384 | - | 18.04634
 | `exp011` | `swin_large_patch4_window7_224` | binary | 224 | - | 18.14715
 | `exp012` | `swin_large_patch4_window7_224` | binary | 224 | - | 18.12262
-| `exp013` | `vit_large_patch32_384` | binary | 384 | - |
-| `exp014` | `vit_large_patch16_224` | binary | 224 | - |
+| `exp013` | `vit_large_patch32_384` | binary | 384 | - | 18.42981
+| `exp014` | `vit_large_patch16_224` | binary | 224 | - | 18.17882
+| `exp015` | `swin_large_patch4_window12_384_in22k` | binary | 384 | - | 17.91612(17.88841)
 
 ## kaggle blog
 ### 2021-12-05
@@ -52,3 +53,16 @@
 - MixUpについて
     - 回帰タスクでは相性が悪いかも？(atmaCup#11)
     - 重み付けラベルに意味があるかどうか(10と50を混ぜたら30の画像になるのか？)
+### 2021-12-08
+- `exp015`
+    - `exp009`をベースに改良
+    - LBは自己最高にになった。(TTAを適用すると更に伸びたので効いている？)
+    - vallossの推移からepoch数は少なめでいい？(trainにfitさせすぎないのが肝？)
+    - Augmentationを変更した
+        - ResizeCropする前にFlip入れたり
+        - CutOutの追加
+    - mixupを外した
+        - mixupなしの方が良かったか？(厳密な検証ではない)
+### 2021-12-10
+- `exp015`のTTAを3回から5回に増やしてsub
+- エラー分析ができるようにログを出力したい
