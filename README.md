@@ -16,7 +16,14 @@
 | `exp012` | `swin_large_patch4_window7_224` | binary | 224 | - | 18.12262
 | `exp013` | `vit_large_patch32_384` | binary | 384 | - | 18.42981
 | `exp014` | `vit_large_patch16_224` | binary | 224 | - | 18.17882
-| `exp015` | `swin_large_patch4_window12_384_in22k` | binary | 384 | - | 17.91612(17.88841)
+| `exp015` | `swin_large_patch4_window12_384_in22k` | binary | 384 | 17.832 | 17.91612(17.88841)
+| `exp017` | `swin_large_patch4_window12_384_in22k` | binary | 384 | - | 18.02289(17.98649)
+| `exp018` | `swin_large_patch4_window12_384_in22k` | binary | 384 | 16.105 | 18.29305 | target=100を除去
+| `exp019` | `swin_large_patch4_window12_384_in22k` | binary | 384 | - | 18.03601 | 2値分類 + 外れ値除去モデル
+| `exp020` | `swin_large_patch4_window12_384_in22k` | binary | 384 | 17.636 | 17.99507(17.95575)
+| `exp021` | `tf_efficientnet_b4` | binary | 380 | 18.715 | -
+| `exp022` | `swin_large_patch4_window12_384_in22k` | binary | 384 | 18.463 | -
+| `exp023` | `swin_large_patch4_window12_384_in22k` | binary | 384 | 17.768 | 17.93922(17.90762)
 
 ## kaggle blog
 ### 2021-12-05
@@ -66,3 +73,43 @@
 ### 2021-12-10
 - `exp015`のTTAを3回から5回に増やしてsub
 - エラー分析ができるようにログを出力したい
+### 2021-12-11
+- `exp016`
+    - マルチタスク学習
+    - BCE : RMSE = 7 : 3でlossを算出
+- `exp017`
+    - `exp015`とほぼ同じだが画像特徴とconcatする前にMLPでembedding
+### 2021-12-12
+- kaggleのRMSEコンペを調査
+    - ELOコンペ
+        - RMSEは外れ値の影響を受けやすいのでまず外れ値がどうかの二値分類モデルを学習するアプローチがあった
+        - 更にその確率と外れ値なしで学習したモデルの予測値で加重平均するなど
+- `exp018`
+    - 外れ値(100)かどうかを予測するタスク
+- `exp019`
+    - 外れ値を除外したデータで学習
+### 2021-12-13
+- `exp020`
+    - `exp015`の10Foldバージョン
+    - PublicLBは上がってしまった
+### 2021-12-15
+- `exp021`
+    - backboneをEfficientNetB4に変更
+    - LocalCVが上がってしまった。swin系が強いのか？
+### 2021-12-16
+- discussionに上がっていたbatch sizeとlrのスレッドを見てチューニングをやってみた
+- `exp022`
+    - `exp015`ベース
+    - lrを1.5e-5 -> 5e-5に変更
+- `exp023`
+    - `exp015`ベース
+    - batch sizeを倍にしたかったがモデルが重いためgrad accumulateを用いてbatch size=8にした
+### 2021-12-17
+- kaggleのcassavaコンペを参考にしているが、ラベルがNoisyな点などが似ているためshake up/downが予想される
+- shakeを耐えるためには個々のモデルの精度を突き詰めるより多様なモデルを用意してアンサンブルする方向にシフトした方が良さそう
+- cassavaだと各モデルの予測値の平均をとるだけでいいスコアっぽいので残り時間考えてその方針で進みたい
+- それ以外にNoisy Labelにロバストなlossがあったりするのでそれを試す
+- `exp024`
+    - lossをBi-Tempered Logistic Lossに変更
+    - 外れ値のロスの影響を減らす+softmaxの裾の幅広げることでラベルノイズの効果弱めるLogistic Lossらしい
+    - cassavaコンペで使われていた
